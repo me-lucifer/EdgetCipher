@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import ExitManagement from './exit-management';
-import { InfoTooltip } from '@/components/info-tooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import React from 'react';
@@ -50,7 +50,7 @@ export default function TradeFormFields({ form, isOcr = false }: TradeFormFields
                 {isOcr && <OcrConfidence confidence={98} />}
               </FormLabel>
               <FormControl>
-                <>
+                <div>
                   <Input list="symbols" {...field} />
                   <datalist id="symbols">
                     <option value="BTC/USDT" />
@@ -58,7 +58,7 @@ export default function TradeFormFields({ form, isOcr = false }: TradeFormFields
                     <option value="SOL/USDT" />
                     <option value="XRP/USDT" />
                   </datalist>
-                </>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
