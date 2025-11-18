@@ -22,7 +22,8 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/settings-context';
-
+import { useTheme } from '@/context/theme-context';
+import { THEMES } from '@/lib/themes';
 
 const PROFILE_KEY = 'edgecipher-profile';
 const NOTIFICATIONS_KEY = 'edgecipher-notifications';
@@ -34,6 +35,7 @@ const PLATFORM_KEY = 'edgecipher-platform';
 export default function SettingsPage() {
   const { toast } = useToast();
   const { settings, updateSetting } = useSettings();
+  const { theme, setTheme } = useTheme();
 
   const [profile, setProfile] = useState({
     displayName: 'Trader Joe',
@@ -60,7 +62,6 @@ export default function SettingsPage() {
   });
 
   const [platform, setPlatform] = useState({
-    darkTheme: true,
     proactiveHelp: true,
   });
 
@@ -70,7 +71,6 @@ export default function SettingsPage() {
       [NOTIFICATIONS_KEY]: setNotifications,
       [SECURITY_KEY]: setSecurity,
       [PRIVACY_KEY]: setPrivacy,
-      [PLATFORM_KEY]: setPlatform,
     };
     
     Object.entries(keys).forEach(([key, setter]) => {
@@ -82,7 +82,9 @@ export default function SettingsPage() {
       } catch (e) { console.error(`Failed to load ${key}`, e); }
     });
 
-  }, []);
+    setPlatform({ proactiveHelp: settings.proactiveHelp });
+
+  }, [settings.proactiveHelp]);
 
   const handleSave = (key: string, data: any, name: string) => {
     try {
@@ -96,11 +98,21 @@ export default function SettingsPage() {
   const handlePlatformChange = (field: keyof typeof platform, value: boolean) => {
     const newState = { ...platform, [field]: value };
     setPlatform(newState);
-    handleSave(PLATFORM_KEY, newState, 'Platform');
     if (field === 'proactiveHelp') {
       updateSetting('proactiveHelp', value);
     }
+  };
+
+  const savePlatformSettings = () => {
+    try {
+      localStorage.setItem(PLATFORM_KEY, JSON.stringify(platform));
+      toast({ title: 'Platform Settings Saved' });
+    } catch (e) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not save platform settings.' });
+    }
   }
+
+  const isDarkTheme = THEMES.find(t => t.id === theme)?.isDark ?? true;
 
 
   return (
@@ -230,17 +242,42 @@ export default function SettingsPage() {
         {/* Platform Tab */}
         <TabsContent value="platform">
             <Card>
-             <CardHeader><CardTitle>Platform</CardTitle></CardHeader>
+             <CardHeader>
+                <CardTitle>Platform</CardTitle>
+                <CardDescription>Adjust the look and feel of the application.</CardDescription>
+             </CardHeader>
              <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-4 rounded-lg border">
-                    <Label htmlFor="darkTheme">Dark Theme</Label>
-                    <Switch id="darkTheme" checked={platform.darkTheme} onCheckedChange={checked => setPlatform({...platform, darkTheme: checked})} />
+                    <div className="space-y-1">
+                        <Label htmlFor="darkTheme">Dark Theme</Label>
+                        <p className="text-xs text-muted-foreground">Toggle between a dark or light user interface.</p>
+                    </div>
+                    <Switch 
+                        id="darkTheme" 
+                        checked={isDarkTheme} 
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                // Default to a dark theme if switching from light
+                                if (theme === 'light-pro' || theme === 'solar-dawn') {
+                                    setTheme('deep-night');
+                                }
+                            } else {
+                                // Default to a light theme if switching from dark
+                                if (theme === 'deep-night' || theme === 'aurora-neon') {
+                                    setTheme('light-pro');
+                                }
+                            }
+                        }} 
+                    />
                 </div>
                  <div className="flex items-center justify-between p-4 rounded-lg border">
-                    <Label htmlFor="proactiveHelp">Proactive help and tooltips</Label>
+                     <div className="space-y-1">
+                        <Label htmlFor="proactiveHelp">Proactive help and tooltips</Label>
+                        <p className="text-xs text-muted-foreground">Show helpful tips and onboarding guides.</p>
+                     </div>
                     <Switch id="proactiveHelp" checked={platform.proactiveHelp} onCheckedChange={checked => handlePlatformChange('proactiveHelp', checked)} />
                 </div>
-                 <Button onClick={() => handleSave(PLATFORM_KEY, platform, 'Platform')}>Save Platform Settings</Button>
+                 <Button onClick={savePlatformSettings}>Save Platform Settings</Button>
              </CardContent>
           </Card>
         </TabsContent>

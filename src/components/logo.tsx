@@ -12,14 +12,14 @@ export function Logo({ className }: { className?: string }) {
       >
         <path
           d="M16 30C23.732 30 30 23.732 30 16C30 8.26801 23.732 2 16 2C8.26801 2 2 8.26801 2 16C2 23.732 8.26801 30 16 30Z"
-          stroke="hsl(var(--primary))"
+          className="stroke-primary"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M20 9L12 16L20 23"
-          stroke="hsl(var(--primary))"
+          className="stroke-primary"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"

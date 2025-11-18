@@ -27,6 +27,7 @@ import { navLinks } from '@/lib/nav-links';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 
 const mockNotifications = [
     { id: 1, text: "Market: BTC volatility is rising.", read: false },
@@ -100,7 +101,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <p className="text-xs text-muted-foreground hidden md:block">{currentPage.subtitle}</p>
                  </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+                <ThemeSwitcher />
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="ghost" size="icon" className="relative">
