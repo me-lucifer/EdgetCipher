@@ -18,10 +18,11 @@ import {
   YAxis,
   Tooltip,
 } from 'recharts';
-import { Candlestick } from 'recharts/es6/cartesian/Candlestick';
 
 import TradePlanningCalculator from './trade-planning-calculator';
 import { ChartConfig } from '@/components/ui/chart';
+import { CustomCandlestick } from './custom-candlestick';
+
 
 const chartData = [
   { date: '2024-07-20', uv: [3480, 3510, 3470, 3500] },
@@ -89,7 +90,7 @@ export default function TradePlanningPage() {
                       />
                     }
                   />
-                  <Candlestick dataKey="uv" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
+                  <CustomCandlestick dataKey="uv" />
                 </ComposedChart>
               </ChartContainer>
             </CardContent>
