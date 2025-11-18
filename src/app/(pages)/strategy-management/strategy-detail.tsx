@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -21,14 +21,37 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Strategy } from './types';
 import { mockTradeLog } from './mock-data';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 
 type StrategyDetailProps = {
   strategy: Strategy;
   onSaveNotes: (id: string, notes: string) => void;
 };
 
+const chartConfig = {
+  value: {
+    label: 'Value',
+    color: 'hsl(var(--primary))',
+  },
+} satisfies ChartConfig;
+
+
 export function StrategyDetail({ strategy, onSaveNotes }: StrategyDetailProps) {
   const [notes, setNotes] = useState(strategy.notes || '');
+
+  const chartData = useMemo(() => {
+    // Generate mock data based on strategy performance
+    const data = [];
+    let value = 10000;
+    const isProfitable = strategy.netPnl >= 0;
+    for (let i = 30; i >= 0; i--) {
+        const fluctuation = (Math.random() - (isProfitable ? 0.45 : 0.55)) * value * 0.05;
+        value += fluctuation;
+        data.push({ date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0], value: Math.round(value) });
+    }
+    return data;
+  }, [strategy.id, strategy.netPnl]);
 
   const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
@@ -59,8 +82,22 @@ export function StrategyDetail({ strategy, onSaveNotes }: StrategyDetailProps) {
             </div>
         </div>
 
-        <div className="h-[200px] flex items-center justify-center rounded-lg border border-dashed bg-muted/30">
-            <p className="text-muted-foreground">Strategy Equity Curve Placeholder</p>
+        <div className="h-[200px]">
+           <ChartContainer config={chartConfig} className="w-full h-full">
+              <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id={`fill-${strategy.id}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={strategy.netPnl >= 0 ? "hsl(var(--primary))" : "hsl(var(--destructive))"} stopOpacity={0.8} />
+                    <stop offset="95%" stopColor={strategy.netPnl >= 0 ? "hsl(var(--primary))" : "hsl(var(--destructive))"} stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={value => new Date(value).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} tickFormatter={value => `$${value / 1000}k`} />
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+                <Area dataKey="value" type="natural" fill={`url(#fill-${strategy.id})`} stroke={strategy.netPnl >= 0 ? "hsl(var(--primary))" : "hsl(var(--destructive))"} />
+              </AreaChart>
+            </ChartContainer>
         </div>
 
         <div>
