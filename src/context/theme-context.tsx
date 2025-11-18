@@ -16,7 +16,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'deep-night',
+  theme: 'light-pro',
   setTheme: () => null,
 };
 
@@ -26,7 +26,7 @@ export function ThemeProvider({
   children,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState<Theme>('deep-night');
+  const [theme, setThemeState] = React.useState<Theme>('light-pro');
 
   React.useEffect(() => {
     try {
@@ -47,8 +47,7 @@ export function ThemeProvider({
       document.cookie = `${THEME_STORAGE_KEY}=${newTheme}; path=/; max-age=31536000; SameSite=Lax`;
 
       const root = window.document.documentElement;
-      root.classList.remove('deep-night', 'aurora-neon', 'light-pro', 'solar-dawn');
-      root.classList.add(newTheme);
+      root.className = newTheme;
 
     } catch (e) {
       console.error('Failed to save theme', e);
@@ -57,8 +56,7 @@ export function ThemeProvider({
 
   React.useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('deep-night', 'aurora-neon', 'light-pro', 'solar-dawn');
-    root.classList.add(theme);
+    root.className = theme;
   }, [theme]);
 
 

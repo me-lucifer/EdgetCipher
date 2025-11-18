@@ -112,7 +112,7 @@ export default function SettingsPage() {
     }
   }
 
-  const isDarkTheme = THEMES.find(t => t.id === theme)?.isDark ?? true;
+  const isDarkTheme = THEMES.find(t => t.id === theme)?.isDark ?? false;
 
 
   return (
@@ -256,14 +256,17 @@ export default function SettingsPage() {
                         id="darkTheme" 
                         checked={isDarkTheme} 
                         onCheckedChange={(checked) => {
+                            const lightThemes = THEMES.filter(t => !t.isDark).map(t => t.id);
+                            const darkThemes = THEMES.filter(t => t.isDark).map(t => t.id);
+
                             if (checked) {
-                                // Default to a dark theme if switching from light
-                                if (theme === 'light-pro' || theme === 'solar-dawn') {
+                                // If current theme is light, switch to a default dark theme
+                                if (lightThemes.includes(theme)) {
                                     setTheme('deep-night');
                                 }
                             } else {
-                                // Default to a light theme if switching from dark
-                                if (theme === 'deep-night' || theme === 'aurora-neon') {
+                                // If current theme is dark, switch to a default light theme
+                                if (darkThemes.includes(theme)) {
                                     setTheme('light-pro');
                                 }
                             }
