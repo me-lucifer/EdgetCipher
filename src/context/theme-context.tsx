@@ -2,14 +2,12 @@
 
 import * as React from 'react';
 
-type Theme = 'deep-night' | 'aurora-neon' | 'light-pro' | 'solar-dawn' | string;
+export type Theme = 'deep-night' | 'aurora-neon' | 'light-pro' | 'solar-dawn' | string;
 
-const THEME_STORAGE_KEY = 'edgecipher-theme';
+export const THEME_STORAGE_KEY = 'edgecipher-theme';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
 };
 
 type ThemeProviderState = {
@@ -26,35 +24,43 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'deep-night',
-  storageKey = THEME_STORAGE_KEY,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return defaultTheme;
-    }
+  const [theme, setThemeState] = React.useState<Theme>('deep-night');
+
+  React.useEffect(() => {
     try {
-      return localStorage.getItem(storageKey) || defaultTheme;
+      const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      if (storedTheme) {
+        setThemeState(storedTheme);
+      }
     } catch (e) {
-      return defaultTheme;
+      // Ignore localStorage errors on server
     }
-  });
+  }, []);
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+      // Also set a cookie for server-side rendering to read
+      document.cookie = `${THEME_STORAGE_KEY}=${newTheme}; path=/; max-age=31536000; SameSite=Lax`;
+
+      const root = window.document.documentElement;
+      root.classList.remove('deep-night', 'aurora-neon', 'light-pro', 'solar-dawn');
+      root.classList.add(newTheme);
+
+    } catch (e) {
+      console.error('Failed to save theme', e);
+    }
+  };
 
   React.useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('theme-deep-night', 'theme-aurora-neon', 'theme-light-pro', 'theme-solar-dawn');
-    
-    if (theme) {
-      root.classList.add(`theme-${theme}`);
-    }
+    root.classList.remove('deep-night', 'aurora-neon', 'light-pro', 'solar-dawn');
+    root.classList.add(theme);
+  }, [theme]);
 
-    try {
-      localStorage.setItem(storageKey, theme);
-    } catch (e) {
-      console.error('Failed to save theme to localStorage', e);
-    }
-  }, [theme, storageKey]);
 
   const value = {
     theme,
