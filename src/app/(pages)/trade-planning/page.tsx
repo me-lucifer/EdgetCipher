@@ -23,7 +23,6 @@ import TradePlanningCalculator from './trade-planning-calculator';
 import { ChartConfig } from '@/components/ui/chart';
 import { CustomCandlestick } from './custom-candlestick';
 
-
 const chartData = [
   { date: '2024-07-20', uv: [3480, 3510, 3470, 3500] },
   { date: '2024-07-21', uv: [3500, 3525, 3490, 3515] },
