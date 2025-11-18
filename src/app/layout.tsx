@@ -4,6 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/context/theme-context';
 import { THEME_STORAGE_KEY } from '@/context/theme-context';
 import { cookies } from 'next/headers';
+import { THEMES } from '@/lib/themes';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'EdgeCipher',
@@ -16,10 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies();
-  const theme = cookieStore.get(THEME_STORAGE_KEY)?.value || 'aurora-neon';
+  const themeId = cookieStore.get(THEME_STORAGE_KEY)?.value || 'aurora-neon';
+  const theme = THEMES.find(t => t.id === themeId) || THEMES.find(t => t.id === 'aurora-neon')!;
 
   return (
-    <html lang="en" suppressHydrationWarning className={theme}>
+    <html lang="en" suppressHydrationWarning className={cn(theme.id, theme.isDark && 'dark')}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
