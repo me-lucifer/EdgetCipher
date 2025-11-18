@@ -39,6 +39,7 @@ import {
 import { cn } from '@/lib/utils';
 import { MetricTile } from '@/components/metric-tile';
 import { Button } from '@/components/ui/button';
+import { useSettings } from '@/context/settings-context';
 
 type Strategy = (typeof strategyBreakdown)[0];
 
@@ -49,6 +50,8 @@ export default function PerformanceAnalyticsPage() {
   const [selectedAsset, setSelectedAsset] = useState<
     (typeof assetBreakdown)[0] | null
   >(null);
+  const { settings } = useSettings();
+  const showTooltips = settings.proactiveHelp;
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-US', {
@@ -103,7 +106,7 @@ export default function PerformanceAnalyticsPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {metric.label}
               </CardTitle>
-              <InfoTooltip>{metric.tooltip}</InfoTooltip>
+              {showTooltips && <InfoTooltip>{metric.tooltip}</InfoTooltip>}
             </CardHeader>
             <CardContent>
               <div
@@ -127,10 +130,10 @@ export default function PerformanceAnalyticsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <CardTitle>Equity Curve (Mocked)</CardTitle>
-              <InfoTooltip>
+              {showTooltips && <InfoTooltip>
                 This chart visualizes your account balance over time, showing
                 growth and declines.
-              </InfoTooltip>
+              </InfoTooltip>}
             </div>
           </CardHeader>
           <CardContent>
@@ -368,5 +371,3 @@ export default function PerformanceAnalyticsPage() {
     </div>
   );
 }
-
-    

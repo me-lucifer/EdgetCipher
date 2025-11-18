@@ -1,3 +1,5 @@
+'use client';
+
 import { Info } from 'lucide-react';
 import {
   Tooltip,
@@ -7,6 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useSettings } from '@/context/settings-context';
 
 type InfoTooltipProps = {
   children: ReactNode;
@@ -15,6 +18,12 @@ type InfoTooltipProps = {
 };
 
 export function InfoTooltip({ children, side = 'top', className }: InfoTooltipProps) {
+  const { settings } = useSettings();
+
+  if (!settings.proactiveHelp) {
+    return null;
+  }
+
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>

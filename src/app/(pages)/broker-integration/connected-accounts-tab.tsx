@@ -26,6 +26,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { ConnectedAccount } from './types';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { useSettings } from '@/context/settings-context';
 
 type ConnectedAccountsTabProps = {
   accounts: ConnectedAccount[];
@@ -33,6 +34,9 @@ type ConnectedAccountsTabProps = {
 };
 
 export default function ConnectedAccountsTab({ accounts, onAction }: ConnectedAccountsTabProps) {
+  const { settings } = useSettings();
+  const showTooltips = settings.proactiveHelp;
+  
   return (
     <Card>
       <CardHeader>
@@ -65,9 +69,9 @@ export default function ConnectedAccountsTab({ accounts, onAction }: ConnectedAc
                         <Badge variant={account.mode === 'Live' ? 'destructive' : 'secondary'}>
                             {account.mode}
                         </Badge>
-                        <InfoTooltip side="top">
+                         {showTooltips && <InfoTooltip side="top">
                             {account.mode === 'Live' ? 'Uses your real broker account.' : 'Simulated trades only, no real money.'}
-                        </InfoTooltip>
+                        </InfoTooltip>}
                         </div>
                     </TableCell>
                     <TableCell>

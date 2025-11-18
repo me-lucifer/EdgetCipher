@@ -8,6 +8,7 @@ import MarketScanner from './market-scanner';
 import PostTradeReview from './post-trade-review';
 import { cn } from '@/lib/utils';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { useSettings } from '@/context/settings-context';
 
 type CoachingMode =
   | 'live'
@@ -43,6 +44,8 @@ const TABS: { id: CoachingMode; label: string; tooltip: string }[] = [
 
 export default function AiCoachingPage() {
   const [activeTab, setActiveTab] = useState<CoachingMode>('live');
+  const { settings } = useSettings();
+  const showTooltips = settings.proactiveHelp;
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8">
@@ -69,9 +72,9 @@ export default function AiCoachingPage() {
             )}
           >
             {tab.label}
-            <InfoTooltip side="bottom" className="ml-2">
+            {showTooltips && <InfoTooltip side="bottom" className="ml-2">
               {tab.tooltip}
-            </InfoTooltip>
+            </InfoTooltip>}
           </Button>
         ))}
       </div>

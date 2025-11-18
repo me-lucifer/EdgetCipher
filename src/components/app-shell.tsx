@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell } from 'lucide-react';
+import { Bell, Check, Info } from 'lucide-react';
 import {
   SidebarProvider,
   Sidebar,
@@ -16,6 +16,11 @@ import {
   SidebarTrigger,
   SidebarFooter,
 } from '@/components/ui/sidebar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { navLinks } from '@/lib/nav-links';
@@ -23,13 +28,26 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
+const mockNotifications = [
+    { id: 1, text: "Market: BTC volatility is rising.", read: false },
+    { id: 2, text: "AI: Your win rate improved vs last week.", read: false },
+    { id: 3, text: "System: New module 'Risk Center' added.", read: true },
+];
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
+  const [notifications, setNotifications] = React.useState(mockNotifications);
 
   const currentPage = navLinks.find(
     link => link.href === pathname
   ) || navLinks[0];
+  
+  const handleMarkAsRead = (id: number) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+  
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <SidebarProvider>
@@ -83,10 +101,45 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                  </div>
             </div>
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon">
-                    <Bell className="h-5 w-5" />
-                    <span className="sr-only">Notifications</span>
-                </Button>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon" className="relative">
+                            <Bell className="h-5 w-5" />
+                            {unreadCount > 0 && (
+                                <span className="absolute top-1 right-1 flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                                </span>
+                            )}
+                            <span className="sr-only">Notifications</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80" align="end">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Notifications</h4>
+                                <p className="text-sm text-muted-foreground">
+                                   You have {unreadCount} unread messages.
+                                </p>
+                            </div>
+                            <div className="grid gap-2">
+                                {notifications.map(n => (
+                                    <div key={n.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                                        <span className={cn("flex h-2 w-2 translate-y-1 rounded-full", n.read ? "" : "bg-primary")} />
+                                        <div className="grid gap-1">
+                                            <p className="text-sm font-medium">{n.text}</p>
+                                            {!n.read && (
+                                              <Button variant="link" size="sm" className="p-0 h-auto justify-start text-xs" onClick={() => handleMarkAsRead(n.id)}>
+                                                  Mark as read
+                                              </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
                 <Avatar className="h-9 w-9">
                   {avatar && <AvatarImage src={avatar.imageUrl} alt="User avatar" data-ai-hint={avatar.imageHint} />}
                   <AvatarFallback>U</AvatarFallback>

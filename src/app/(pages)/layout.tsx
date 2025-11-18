@@ -1,7 +1,12 @@
 'use client';
 
 import { AppShell } from '@/components/app-shell';
+import { SettingsProvider } from '@/context/settings-context';
 
 export default function PagesLayout({ children }: { children: React.ReactNode }) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <SettingsProvider>
+      <AppShell>{children}</AppShell>
+    </SettingsProvider>
+  );
 }
