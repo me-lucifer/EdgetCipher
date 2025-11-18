@@ -24,12 +24,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartConfig,
+} from '@/components/ui/chart';
 
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import {
   performanceMetrics,
   equityData,
+  portfolioPerformance,
   drawdownProfile,
   returnDistribution,
   tradeMix,
@@ -42,6 +49,13 @@ import { Button } from '@/components/ui/button';
 import { useSettings } from '@/context/settings-context';
 
 type Strategy = (typeof strategyBreakdown)[0];
+
+const chartConfig = {
+  value: {
+    label: 'Value',
+    color: 'hsl(var(--primary))',
+  },
+} satisfies ChartConfig;
 
 export default function PerformanceAnalyticsPage() {
   const [timeframe, setTimeframe] = useState('30d');
@@ -111,7 +125,7 @@ export default function PerformanceAnalyticsPage() {
             <CardContent>
               <div
                 className={cn(
-                  'text-3xl font-bold',
+                  'text-2xl lg:text-3xl font-bold',
                   metric.isPositive === true && 'text-emerald-500',
                   metric.isPositive === false && 'text-destructive'
                 )}
@@ -137,8 +151,59 @@ export default function PerformanceAnalyticsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px] w-full flex items-center justify-center rounded-lg border border-dashed bg-muted/30">
-              <p className="text-muted-foreground">Equity Chart Placeholder</p>
+            <div className="h-[250px] w-full">
+              <ChartContainer config={chartConfig} className="h-full w-full">
+                <AreaChart
+                    accessibilityLayer
+                    data={portfolioPerformance}
+                    margin={{
+                    left: 12,
+                    right: 12,
+                    top: 5,
+                    bottom: 5,
+                    }}
+                >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={value => value.slice(0, 3)}
+                    />
+                    <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={value => `$${value / 1000}k`}
+                    />
+                    <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="dot" />}
+                    />
+                    <defs>
+                    <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                        offset="5%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0.8}
+                        />
+                        <stop
+                        offset="95%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0.1}
+                        />
+                    </linearGradient>
+                    </defs>
+                    <Area
+                    dataKey="value"
+                    type="natural"
+                    fill="url(#fillValue)"
+                    stroke="hsl(var(--primary))"
+                    stackId="a"
+                    />
+                </AreaChart>
+                </ChartContainer>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
               <div>
@@ -371,3 +436,5 @@ export default function PerformanceAnalyticsPage() {
     </div>
   );
 }
+
+    
