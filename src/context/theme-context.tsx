@@ -10,9 +10,6 @@ type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
-  enableSystem?: boolean;
-  disableTransitionOnChange?: boolean;
-  attribute?: string;
 };
 
 type ThemeProviderState = {
@@ -31,10 +28,12 @@ export function ThemeProvider({
   children,
   defaultTheme = 'deep-night',
   storageKey = THEME_STORAGE_KEY,
-  attribute = 'class',
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(() => {
+    if (typeof window === 'undefined') {
+      return defaultTheme;
+    }
     try {
       return localStorage.getItem(storageKey) || defaultTheme;
     } catch (e) {
@@ -45,19 +44,21 @@ export function ThemeProvider({
   React.useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('theme-deep-night', 'theme-aurora-neon', 'theme-light-pro', 'theme-solar-dawn');
-    root.classList.add(`theme-${theme}`);
-  }, [theme]);
+    
+    if (theme) {
+      root.classList.add(`theme-${theme}`);
+    }
+
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch (e) {
+      console.error('Failed to save theme to localStorage', e);
+    }
+  }, [theme, storageKey]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      try {
-        localStorage.setItem(storageKey, theme);
-      } catch (e) {
-        console.error('Failed to save theme to localStorage', e);
-      }
-      setTheme(theme);
-    },
+    setTheme,
   };
 
   return (
