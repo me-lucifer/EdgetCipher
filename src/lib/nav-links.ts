@@ -60,16 +60,22 @@ export const navLinks: NavLink[] = [
     subtitle: 'Create, backtest, and manage your trading strategies.',
   },
   {
-    href: '/community',
-    label: 'Community',
-    icon: Users,
-    subtitle: 'Connect with other traders and share insights.',
-  },
-  {
     href: '/trade-journal',
     label: 'Trade Journal',
     icon: Book,
     subtitle: 'Log and review your trades to learn from your experience.',
+  },
+  {
+    href: '/risk-center',
+    label: 'Risk Center',
+    icon: Shield,
+    subtitle: 'Manage your risk and exposure across all positions.',
+  },
+    {
+    href: '/crypto-vix',
+    label: 'Crypto VIX',
+    icon: CandlestickChart,
+    subtitle: 'Monitor market volatility with the Crypto Volatility Index.',
   },
   {
     href: '/news',
@@ -77,23 +83,17 @@ export const navLinks: NavLink[] = [
     icon: Newspaper,
     subtitle: 'Stay up-to-date with the latest market news.',
   },
+    {
+    href: '/community',
+    label: 'Community',
+    icon: Users,
+    subtitle: 'Connect with other traders and share insights.',
+  },
   {
     href: '/historical-trade',
     label: 'Historical Trade',
     icon: History,
     subtitle: 'Browse and analyze historical market data.',
-  },
-  {
-    href: '/crypto-vix',
-    label: 'Crypto VIX',
-    icon: CandlestickChart,
-    subtitle: 'Monitor market volatility with the Crypto Volatility Index.',
-  },
-  {
-    href: '/risk-center',
-    label: 'Risk Center',
-    icon: Shield,
-    subtitle: 'Manage your risk and exposure across all positions.',
   },
   {
     href: '/settings',
