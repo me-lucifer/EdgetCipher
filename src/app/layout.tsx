@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies();
-  const theme = cookieStore.get(THEME_STORAGE_KEY)?.value || 'light-pro';
+  const theme = cookieStore.get(THEME_STORAGE_KEY)?.value || 'aurora-neon';
 
   return (
     <html lang="en" suppressHydrationWarning className={theme}>

@@ -16,7 +16,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'light-pro',
+  theme: 'aurora-neon',
   setTheme: () => null,
 };
 
@@ -26,29 +26,22 @@ export function ThemeProvider({
   children,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState<Theme>('light-pro');
-
-  React.useEffect(() => {
-    try {
-      const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-      if (storedTheme) {
-        setThemeState(storedTheme);
-      }
-    } catch (e) {
-      // Ignore localStorage errors on server
+  const [theme, setThemeState] = React.useState<Theme>(() => {
+     if (typeof window === 'undefined') {
+      return 'aurora-neon';
     }
-  }, []);
+    try {
+      return localStorage.getItem(THEME_STORAGE_KEY) || 'aurora-neon';
+    } catch (e) {
+      return 'aurora-neon';
+    }
+  });
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
     try {
       localStorage.setItem(THEME_STORAGE_KEY, newTheme);
-      // Also set a cookie for server-side rendering to read
       document.cookie = `${THEME_STORAGE_KEY}=${newTheme}; path=/; max-age=31536000; SameSite=Lax`;
-
-      const root = window.document.documentElement;
-      root.className = newTheme;
-
     } catch (e) {
       console.error('Failed to save theme', e);
     }
