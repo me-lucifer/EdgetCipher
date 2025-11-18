@@ -26,7 +26,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { toast } from '@/hooks/use-toast';
-import { AlertTriangle, ShieldCheck, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -52,41 +52,35 @@ const formatCurrency = (value: number) => {
 };
 
 export default function TradePlanningCalculator() {
-  const [defaultValues, setDefaultValues] = useState<TradePlanFormValues | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const form = useForm<TradePlanFormValues>({
+    resolver: zodResolver(tradePlanSchema),
+    mode: 'onChange',
+    // Initialize with default values to prevent uncontrolled to controlled error
+    defaultValues: tradePlanSchema.parse({}),
+  });
+  
+  const { watch, reset } = form;
 
   useEffect(() => {
     try {
       const savedTemplate = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedTemplate) {
         const parsed = JSON.parse(savedTemplate);
-        // Validate parsed data against schema to avoid loading malformed data
         const validation = tradePlanSchema.safeParse(parsed);
         if (validation.success) {
-          setDefaultValues(validation.data);
-        } else {
-          setDefaultValues(tradePlanSchema.parse({}));
+          reset(validation.data);
         }
-      } else {
-        setDefaultValues(tradePlanSchema.parse({}));
       }
     } catch {
-      setDefaultValues(tradePlanSchema.parse({}));
+      // Ignore errors and use default values
     }
-  }, []);
+    setIsInitialized(true);
+  }, [reset]);
 
-  const form = useForm<TradePlanFormValues>({
-    resolver: zodResolver(tradePlanSchema),
-    mode: 'onChange',
-  });
 
-  const { watch, reset } = form;
   const formValues = watch();
-
-  useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
-    }
-  }, [defaultValues, reset]);
 
   const calculations = useMemo(() => {
     const { accountBalance, riskPercent, entry, stopLoss, takeProfit } = formValues;
@@ -152,7 +146,7 @@ export default function TradePlanningCalculator() {
   const handlePaperTrade = () => toast({ title: 'Paper Trade Started (Simulation)' });
   const handleShare = () => toast({ title: 'Plan Shared to Community (Demo)' });
 
-  if (!defaultValues) {
+  if (!isInitialized) {
     return (
         <Card>
             <CardHeader>
