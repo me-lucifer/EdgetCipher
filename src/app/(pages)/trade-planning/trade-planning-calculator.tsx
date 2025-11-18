@@ -24,10 +24,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { InfoTooltip } from '@/components/info-tooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { toast } from '@/hooks/use-toast';
 import { AlertTriangle, ShieldCheck, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const tradePlanSchema = z.object({
   symbol: z.string().default('ETH/USDT'),
@@ -152,7 +153,37 @@ export default function TradePlanningCalculator() {
   const handleShare = () => toast({ title: 'Plan Shared to Community (Demo)' });
 
   if (!defaultValues) {
-    return <Card><CardHeader><CardTitle>Loading Planner...</CardTitle></CardHeader></Card>;
+    return (
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </CardContent>
+            <CardFooter className="flex-col items-stretch space-y-3">
+                 <Skeleton className="h-10 w-full" />
+                <div className="grid grid-cols-3 gap-2">
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-9 w-full" />
+                </div>
+            </CardFooter>
+        </Card>
+    );
   }
 
   return (
