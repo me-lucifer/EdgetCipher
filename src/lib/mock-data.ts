@@ -1,0 +1,95 @@
+
+export const dashboardMetrics = [
+  {
+    label: 'Portfolio Value',
+    value: '$125,832.71',
+    trend: '+2.1%',
+    isPositive: true,
+  },
+  {
+    label: '24h P&L',
+    value: '$1,943.50',
+    trend: '+12.5%',
+    isPositive: true,
+  },
+  {
+    label: 'All-Time P&L',
+    value: '$32,189.24',
+    trend: '-1.8%',
+    isPositive: false,
+  },
+  {
+    label: 'Win Rate',
+    value: '68.4%',
+    trend: '+0.5%',
+    isPositive: true,
+  },
+];
+
+export const portfolioPerformance = [
+  { date: 'Jan 23', value: 100000 },
+  { date: 'Feb 23', value: 105000 },
+  { date: 'Mar 23', value: 115000 },
+  { date: 'Apr 23', value: 112000 },
+  { date: 'May 23', value: 120000 },
+  { date: 'Jun 23', value: 128000 },
+  { date: 'Jul 23', value: 125000 },
+  { date: 'Aug 23', value: 135000 },
+  { date: 'Sep 23', value: 140000 },
+  { date: 'Oct 23', value: 138000 },
+  { date: 'Nov 23', value: 150000 },
+  { date: 'Dec 23', value: 155000 },
+  { date: 'Jan 24', value: 160000 },
+];
+
+export const recentTrades = [
+  {
+    id: 'TRD001',
+    asset: 'BTC/USD',
+    type: 'Long',
+    entry: '$68,123.45',
+    exit: '$69,456.78',
+    pnl: '$1,333.33',
+    status: 'Closed',
+    isPositive: true,
+  },
+  {
+    id: 'TRD002',
+    asset: 'ETH/USD',
+    type: 'Short',
+    entry: '$3,456.78',
+    exit: '$3,401.23',
+    pnl: '$55.55',
+    status: 'Closed',
+    isPositive: true,
+  },
+  {
+    id: 'TRD003',
+    asset: 'SOL/USD',
+    type: 'Long',
+    entry: '$165.20',
+    exit: '$162.80',
+    pnl: '-$2.40',
+    status: 'Closed',
+    isPositive: false,
+  },
+  {
+    id: 'TRD004',
+    asset: 'DOGE/USD',
+    type: 'Long',
+    entry: '$0.158',
+    exit: 'N/A',
+    pnl: 'N/A',
+    status: 'Open',
+  },
+  {
+    id: 'TRD005',
+    asset: 'ADA/USD',
+    type: 'Short',
+    entry: '$0.45',
+    exit: '$0.47',
+    pnl: '-$0.02',
+    status: 'Closed',
+    isPositive: false,
+  },
+];
